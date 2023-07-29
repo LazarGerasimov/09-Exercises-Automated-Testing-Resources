@@ -33,5 +33,18 @@ test('Verify "Register" button is visible', async ({ page }) => {
     expect(isRegisterButtonVisible).toBe(true);
 });
 
+test('Verify "All Books" link is visible after login', async ({ page }) => {
+
+    await page.goto('http://localhost:3000/login');
+    await page.fill('input[name="email"]', 'peter@abv.bg');
+    await page.fill('input[name="password"]', '123456');
+    await page.click('input[type="submit"]');
+
+    const allBooksLink = await page.$('a[href="/catalog"]');
+    const isAllBooksLinkVisible = await allBooksLink.isVisible();
+
+    expect(isAllBooksLinkVisible).toBe(true);
+});
+
 
 
