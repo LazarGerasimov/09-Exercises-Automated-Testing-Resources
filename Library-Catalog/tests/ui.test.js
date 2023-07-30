@@ -72,4 +72,20 @@ test('Verify "Add Book" link is visible after login', async ({ page }) => {
     expect(isAddBookLinkVisible).toBe(true);
 });
 
+test('Submit form with empty input fields', async({page}) => {
+    await page.goto('http://localhost:3000/login');
+    await page.click('input[type="submit"]');
+    // We should listen for the dialog event, which would visualize an alert popup window with the warning 
+    // message. After that we, should verify that the dialog type is indeed alert and check if the message is the same as 
+    // in the login.js file. Finally, we should click on the [OK] button in order to dismiss the alert window.
+    page.on('dialog', async dialog => {
+        expect(dialog.type()).toContain('alert');
+        expect(dialog.message()).toContain('All fields are required!');
+        await dialog.accept();
+        // We should also check whether we have been redirected to the right page or not
+    });
+    await page.$('a[href="/login"]');
+    expect(page.url()).toBe('http://localhost:3000/login');
+})
+
 
