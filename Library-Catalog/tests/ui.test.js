@@ -86,6 +86,32 @@ test('Submit form with empty input fields', async({page}) => {
     });
     await page.$('a[href="/login"]');
     expect(page.url()).toBe('http://localhost:3000/login');
-})
+});
+
+test('Add book with correct data', async({page})=> {
+    /* We have to go to the "Login" page and fill in the predefined email and password credentials and click on the
+    [Submit] button in order to be logged-in, as only logged-in users can add books */
+    await page.goto('http://localhost:3000/login');
+    await page.fill('input[name="email"]', 'peter@abv.bg');
+    await page.fill('input[name="password"]', '123456');
+    await Promise.all([
+        page.click('input[type="submit"]'),
+        page.waitForURL('http://localhost:3000/catalog')
+    ]);
+    // go to the "Add Book" page via the navigation menu link
+    await page.click('a[href="/create"]');
+    // wait for the form to load
+    await page.waitForSelector('#create-form');
+    // after the form has loaded, fill in the book details with dummy data
+    await page.fill('#title', 'Test Book');
+    await page.fill('#description', 'This is a test book description');
+    await page.fill('#image', 'https://example.com/book-image.jpg');
+    await page.selectOption('#type', 'Fiction');
+    // once finished, click submit button
+    await page.click('#create-form input[type="submit"]');
+    // verify that we're being redirected to the correct page – this is our indicator that the book has been successfully added:
+    await page.waitForURL('http://localhost:3000/catalog');
+    expect(page.url()).toBe('http://localhost:3000/catalog')
+});
 
 
