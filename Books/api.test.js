@@ -53,4 +53,19 @@ sent as a POST request payload to the API: */
                 done();
             });
     });
+
+    it('should GET a single book', (done) => {
+        const bookId = 1;
+
+        chai.request(server)
+            .get(`/books/${bookId}`)
+            .end((err, res) => {
+                expect(res).to.have.status(200);
+                expect(res.body).to.be.a('object');
+                expect(res.body).to.have.property('id');
+                expect(res.body).to.have.property('title');
+                expect(res.body).to.have.property('author');
+                done();
+            });
+    })
 })
