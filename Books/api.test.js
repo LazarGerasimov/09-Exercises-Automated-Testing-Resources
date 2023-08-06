@@ -69,7 +69,7 @@ sent as a POST request payload to the API: */
             });
     });
 
-    it ('should PUT an existing book', (done) => {
+    it('should PUT an existing book', (done) => {
         const bookId = 1;
         const updatedBook = {id: bookId, title: "Updated Test Book", author: "Updated Test Author"};
         chai.request(server)
@@ -80,6 +80,28 @@ sent as a POST request payload to the API: */
                 expect(res.body).to.be.a('object');
                 expect(res.body.title).to.equal('Updated Test Book');
                 expect(res.body.author).to.equal('Updated Test Author');
+                done();
+            });
+    });
+
+    it('should return 404 when trying to GET, PUT or DELETE a non-existing book', (done) => {
+        chai.request(server)
+            .get('/books/9999')
+            .end((err, res) => {
+                expect(res).to.have.status(404);
+            });
+
+        chai.request(server)
+            .put('/books/9999')
+            .send({id: "9999", title: "Non-existing Book", author: "Non-existing Author"})
+            .end((err, res) => {
+                expect(res).to.have.status(404);
+            });
+        
+        chai.request(server)
+            .delete('/books/9999')
+            .end((err, res) => {
+                expect(res).to.have.status(404);
                 done();
             });
     });
